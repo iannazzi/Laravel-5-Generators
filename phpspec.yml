@@ -1,0 +1,5 @@
+suites:
+    main:
+        namespace: Iannazzi\Generators
+        psr4_prefix: Iannazzi\Generators
+        src_path: src

@@ -1,74 +1,73 @@
-<?php namespace Iannazzi\Generators;
+<?php namespace Iannazzi\Generators\Migrations;
 
 use DB;
 
-class SchemaGenerator {
+class SchemaGenerator
+{
 
-	/**
-	 * @var \Doctrine\DBAL\Schema\AbstractSchemaManager
-	 */
-	protected $schema;
+    /**
+     * @var \Doctrine\DBAL\Schema\AbstractSchemaManager
+     */
+    protected $schema;
 
-	/**
-	 * @var FieldGenerator
-	 */
-	protected $fieldGenerator;
+    /**
+     * @var FieldGenerator
+     */
+    protected $fieldGenerator;
 
-	/**
-	 * @var ForeignKeyGenerator
-	 */
-	protected $foreignKeyGenerator;
+    /**
+     * @var ForeignKeyGenerator
+     */
+    protected $foreignKeyGenerator;
 
-	/**
-	 * @var string
-	 */
-	protected $database;
-	/**
-	 * @var bool
-	 */
-	private $ignoreIndexNames;
-	/**
-	 * @var bool
-	 */
-	private $ignoreForeignKeyNames;
+    /**
+     * @var string
+     */
+    protected $database;
+    /**
+     * @var bool
+     */
+    private $ignoreIndexNames;
+    /**
+     * @var bool
+     */
+    private $ignoreForeignKeyNames;
 
-	/**
-	 * @param string $database
-	 * @param bool   $ignoreIndexNames
-	 * @param bool   $ignoreForeignKeyNames
-	 */
-	public function __construct($database, $ignoreIndexNames, $ignoreForeignKeyNames)
-	{
-		$connection = DB::connection($database)->getDoctrineConnection();
-		$connection->getDatabasePlatform()->registerDoctrineTypeMapping('enum', 'string');
-		$connection->getDatabasePlatform()->registerDoctrineTypeMapping('bit', 'boolean');
+    /**
+     * @param string $database
+     * @param bool $ignoreIndexNames
+     * @param bool $ignoreForeignKeyNames
+     */
+    public function __construct($database, $ignoreIndexNames, $ignoreForeignKeyNames)
+    {
 
-		$this->database = $connection->getDatabase();
+        $connection = DB::connection($database)->getDoctrineConnection();
+        $connection->getDatabasePlatform()->registerDoctrineTypeMapping('enum', 'string');
+        $connection->getDatabasePlatform()->registerDoctrineTypeMapping('bit', 'boolean');
 
-		$this->schema = $connection->getSchemaManager();
-		$this->fieldGenerator = new FieldGenerator();
-		$this->foreignKeyGenerator = new ForeignKeyGenerator();
+        $this->database = $connection->getDatabase();
 
-		$this->ignoreIndexNames = $ignoreIndexNames;
-		$this->ignoreForeignKeyNames = $ignoreForeignKeyNames;
-	}
+        $this->schema = $connection->getSchemaManager();
+        $this->fieldGenerator = new FieldGenerator();
+        $this->foreignKeyGenerator = new ForeignKeyGenerator();
 
-	/**
-	 * @return mixed
-	 */
-	public function getTables()
-	{
-		return $this->schema->listTableNames();
-	}
+        $this->ignoreIndexNames = $ignoreIndexNames;
+        $this->ignoreForeignKeyNames = $ignoreForeignKeyNames;
+    }
 
-	public function getFields($table)
-	{
-		return $this->fieldGenerator->generate($table, $this->schema, $this->database, $this->ignoreIndexNames);
-	}
+    public function getTables()
+    {
+        return $this->schema->listTableNames();
+    }
 
-	public function getForeignKeyConstraints($table)
-	{
-		return $this->foreignKeyGenerator->generate($table, $this->schema, $this->ignoreForeignKeyNames);
-	}
+    public function getFields($table)
+    {
+        return $this->fieldGenerator->generate($table, $this->schema, $this->database, $this->ignoreIndexNames);
+    }
+
+    public function getForeignKeyConstraints($table)
+    {
+        return $this->foreignKeyGenerator->generate($table, $this->schema, $this->ignoreForeignKeyNames);
+    }
 
 }

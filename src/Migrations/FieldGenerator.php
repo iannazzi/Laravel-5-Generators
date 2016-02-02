@@ -1,4 +1,4 @@
-<?php namespace Iannazzi\Generators;
+<?php namespace Iannazzi\Generators\Migrations;
 
 use DB;
 
@@ -38,6 +38,7 @@ class FieldGenerator {
 		if ( empty( $columns ) ) return false;
 
 		$indexGenerator = new IndexGenerator($table, $schema, $ignoreIndexNames);
+		//dd($this->getFields($columns, $indexGenerator));
 		$fields = $this->setEnum($this->getFields($columns, $indexGenerator), $table);
 		$indexes = $this->getMultiFieldIndexes($indexGenerator);
 		return array_merge($fields, $indexes);
@@ -72,9 +73,10 @@ class FieldGenerator {
 	 */
 	protected function setEnum(array $fields, $table)
 	{
+
 		foreach ($this->getEnum($table) as $column) {
-			$fields[$column->column_name]['type'] = 'enum';
-			$fields[$column->column_name]['args'] = str_replace('enum(', 'array(', $column->column_type);
+			$fields[$column['column_name']]['type'] = 'enum';
+			$fields[$column['column_name']]['args'] = str_replace('enum(', 'array(', $column['column_type']);
 		}
 		return $fields;
 	}

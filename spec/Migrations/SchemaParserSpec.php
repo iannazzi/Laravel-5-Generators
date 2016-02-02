@@ -1,4 +1,4 @@
-    <?php
+<?php
 
 namespace spec\Iannazzi\Generators\Migrations;
 

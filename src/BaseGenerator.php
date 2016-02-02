@@ -3,13 +3,13 @@
 namespace Iannazzi\Generators;
 
 
-use Illuminate\Console\Command;
+use Symfony\Component\Console\Output\ConsoleOutput;
 use Illuminate\Filesystem\Filesystem;
 
 class BaseGenerator
 {
     protected $files;
-    protected $command;
+    protected $output;
 
     /**
      * Create a new command instance.
@@ -17,17 +17,11 @@ class BaseGenerator
      * @param Filesystem $files
      * @param Composer $composer
      */
-    public function __construct(Filesystem $files)
+    public function __construct()
     {
-
-        $this->files = $files;
-        $this->command = new Command();
+        $this->files = new Filesystem();
+        $this->output = new ConsoleOutput();
     }
-
-//    public function __construct()
-//    {
-//        $this->files = new Filesystem();
-//    }
 
     /**
      * Build the directory for the class if necessary.

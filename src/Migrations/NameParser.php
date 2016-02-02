@@ -9,7 +9,7 @@ class NameParser
      * @param $migration_name
      * @return mixed
      */
-    protected function getTableNameFromMigrationName($migration_name)
+    public function getTableNameFromMigrationName($migration_name)
     {
         $meta = $this->parse($migration_name);
         return $meta['table'];

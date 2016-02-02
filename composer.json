@@ -1,24 +1,26 @@
 {
-  "name": "laracasts/generators",
-  "description": "Extend Laravel 5's generators.",
+  "name": "iannazzi/generators",
+  "description": "More Laravel 5's generators.",
   "keywords": ["laravel", "generators"],
   "license": "MIT",
   "authors": [
     {
-      "name": "Jeffrey Way",
-      "email": "jeffrey@laracasts.com"
+      "name": "Craig Iannazzi",
+      "email": "craig@craiglorious.com"
     }
   ],
   "require": {
     "php": ">=5.4.0",
-    "illuminate/support": "~5.0"
+    "illuminate/support": "~5.0",
+    "symfony/console":"~2.0",
+    "doctrine/dbal": "~2.5"
   },
   "require-dev": {
     "phpspec/phpspec": "~2.1"
   },
   "autoload": {
     "psr-4": {
-      "Laracasts\\Generators\\": "src/"
+      "Iannazzi\\Generators\\": "src/"
     }
   }
 }

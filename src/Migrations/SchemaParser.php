@@ -11,6 +11,27 @@ class SchemaParser
      */
     private $schema = [];
 
+    function parseFields($fields)
+    {
+
+        foreach ($fields as $field)
+        {
+            $parsed_field = [];
+            $parsed_field['name'] = $field['field'];
+             $parsed_field['type'] = $field['type'];
+             $parsed_field['arguments'] = (isset($field['args'])) ? [$field['args']] : [];
+
+            //parseArguments(&$type)
+
+
+            $options = (isset($field['decorators'])) ? $field['decorators'] : [];
+
+            $parsed_field['options'] =  $this->parseOptions($options);
+            $this->addField($parsed_field);
+        }
+        return $this->schema;
+    }
+
     /**
      * Parse the command line migration schema.
      * Ex: name:string, age:integer:nullable
@@ -18,14 +39,15 @@ class SchemaParser
      * @param  string $schema
      * @return array
      */
-    public function parse($schema)
+    public function parseSchema($schema)
     {
         $fields = $this->splitIntoFields($schema);
-
-        foreach ($fields as $field) {
+        foreach ($fields as $field)
+        {
             $segments = $this->parseSegments($field);
 
-            if ($this->fieldNeedsForeignConstraint($segments)) {
+            if ($this->fieldNeedsForeignConstraint($segments))
+            {
                 unset($segments['options']['foreign']);
 
                 // If the user wants a foreign constraint, then
@@ -37,8 +59,8 @@ class SchemaParser
 
                 continue;
             }
-
             $this->addField($segments);
+
         }
 
         return $this->schema;
@@ -77,20 +99,28 @@ class SchemaParser
     private function parseSegments($field)
     {
         $segments = explode(':', $field);
-
         $name = array_shift($segments);
         $type = array_shift($segments);
-        $arguments = [];
+        var_dump($type);
         $options = $this->parseOptions($segments);
 
+
+        $arguments = $this->parseArguments($type);
+
+        return compact('name', 'type', 'arguments', 'options');
+    }
+    private function parseArguments($type)
+    {
+        $arguments = [];
         // Do we have arguments being used here?
         // Like: string(100)
-        if (preg_match('/(.+?)\(([^)]+)\)/', $type, $matches)) {
+        if (preg_match('/(.+?)\(([^)]+)\)/', $type, $matches))
+        {
             $type = $matches[1];
             $arguments = explode(',', $matches[2]);
         }
+        return $arguments;
 
-        return compact('name', 'type', 'arguments', 'options');
     }
 
     /**
@@ -103,13 +133,16 @@ class SchemaParser
     {
         if (empty($options)) return [];
 
-        foreach ($options as $option) {
-            if (str_contains($option, '(')) {
+        foreach ($options as $option)
+        {
+            if (str_contains($option, '('))
+            {
                 preg_match('/([a-z]+)\(([^\)]+)\)/i', $option, $matches);
 
-                $results[$matches[1]] = $matches[2];
-            } else {
-                $results[$option] = true;
+                $results[ $matches[1] ] = $matches[2];
+            } else
+            {
+                $results[ $option ] = true;
             }
         }
 

@@ -2,12 +2,15 @@
 
 namespace Iannazzi\Generators\Commands;
 
+use Iannazzi\Generators\Migrations\MigrationGenerator;
+use Iannazzi\Generators\Migrations\NameParser;
+use Iannazzi\Generators\Migrations\SchemaParser;
+use Iannazzi\Generators\Migrations\SyntaxBuilder;
 use Illuminate\Console\AppNamespaceDetectorTrait;
 use Illuminate\Console\Command;
 use Illuminate\Filesystem\Filesystem;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputArgument;
-use Iannazzi\Generators\Migrations\MigrationGeneratorCommand;
 use Iannazzi\Generators\Migrations\MigrationGeneratorInterface;
 
 class MigrationMakeCommand extends Command implements MigrationGeneratorInterface
@@ -47,14 +50,8 @@ class MigrationMakeCommand extends Command implements MigrationGeneratorInterfac
      * @var Composer
      */
     private $composer;
-    /**
-     * @var MigrationGeneratorCommand
-     */
-    private $migrationGenerator;
-    /**
-     * @var ModelGenerator
-     */
-    private $modelGenerator;
+
+
 
     /**
      * Create a new command instance.
@@ -62,17 +59,14 @@ class MigrationMakeCommand extends Command implements MigrationGeneratorInterfac
      * @param Filesystem $files
      * @param Composer $composer
      */
-    public function __construct(Filesystem $files,
-                                MigrationGeneratorCommand $migrationGenerator,
-                                ModelGenerator $modelGenerator)
+    public function __construct(Filesystem $files)
 
     {
         parent::__construct();
 
         $this->files = $files;
         $this->composer = app()['composer'];
-        $this->migrationGenerator = $migrationGenerator;
-        $this->modelGenerator = $modelGenerator;
+
     }
 
     /**
@@ -85,6 +79,7 @@ class MigrationMakeCommand extends Command implements MigrationGeneratorInterfac
         //php artisan make:migration:schema create_users_table --schema="username:string, email:string:unique"
 
         $this->meta = (new NameParser)->parse($this->argument('name'));
+
         $this->table_name = $this->meta['table'];
         $this->action = $this->meta['action'];
 
@@ -92,8 +87,9 @@ class MigrationMakeCommand extends Command implements MigrationGeneratorInterfac
         $migration_path = $this->getMigrationPath();
 
         $schema = $this->getSchemaOptions();
+        $migration_generator = new MigrationGenerator();
+        $migration_generator->makeMigrationFromCommand($migration_name, $migration_path, $schema);
 
-        $this->migrationGenerator->makeMigrationFromCommand($migration_name, $migration_path, $schema);
         $this->composer->dumpAutoloads();
         //$model_name = $this->modelGenerator->createModelName($this->table_name);
         //$this->modelGenerator->makeEmptyModel($model_name);
@@ -105,7 +101,7 @@ class MigrationMakeCommand extends Command implements MigrationGeneratorInterfac
      * @param  string $name
      * @return string
      */
-    protected function getMigrationPath()
+    public function getMigrationPath()
     {
         return base_path() . '/database/migrations';
     }
@@ -119,11 +115,11 @@ class MigrationMakeCommand extends Command implements MigrationGeneratorInterfac
 
         if ($schema)
         {
-            $schema = (new SchemaParser)->parse($schema);
+            $schema = (new SchemaParser)->parseSchema($schema);
         }
 
         $schema = (new SyntaxBuilder)->create($schema, $this->meta);
-
+        dd($schema);
         return $schema;
     }
 

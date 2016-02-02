@@ -1,4 +1,4 @@
-<?php namespace Iannazzi\Generators;
+<?php namespace Iannazzi\Generators\Migrations;
 
 
 class IndexGenerator {

@@ -13,20 +13,28 @@ class SchemaParser
 
     function parseFields($fields)
     {
-
         foreach ($fields as $field)
         {
             $parsed_field = [];
             $parsed_field['name'] = $field['field'];
-             $parsed_field['type'] = $field['type'];
-             $parsed_field['arguments'] = (isset($field['args'])) ? [$field['args']] : [];
-
-            //parseArguments(&$type)
-
-
+            $type = $field['type'];
+            $arguments = (isset($field['args'])) ? [$field['args']] : [];
             $options = (isset($field['decorators'])) ? $field['decorators'] : [];
 
             $parsed_field['options'] =  $this->parseOptions($options);
+
+
+            // Do we have arguments being used here?
+            // Like: string(100)
+            if (sizeof($arguments)>0)
+            {
+                $str_arguments = implode(',',$arguments);
+
+                $type = $type .'(' . $str_arguments .')';
+            }
+            $parsed_field['type'] = $type;
+            $parsed_field['arguments'] = $arguments;
+
             $this->addField($parsed_field);
         }
         return $this->schema;
@@ -62,7 +70,6 @@ class SchemaParser
             $this->addField($segments);
 
         }
-
         return $this->schema;
     }
 
@@ -99,19 +106,12 @@ class SchemaParser
     private function parseSegments($field)
     {
         $segments = explode(':', $field);
+
         $name = array_shift($segments);
         $type = array_shift($segments);
-        var_dump($type);
+        $arguments = [];
         $options = $this->parseOptions($segments);
 
-
-        $arguments = $this->parseArguments($type);
-
-        return compact('name', 'type', 'arguments', 'options');
-    }
-    private function parseArguments($type)
-    {
-        $arguments = [];
         // Do we have arguments being used here?
         // Like: string(100)
         if (preg_match('/(.+?)\(([^)]+)\)/', $type, $matches))
@@ -119,10 +119,8 @@ class SchemaParser
             $type = $matches[1];
             $arguments = explode(',', $matches[2]);
         }
-        return $arguments;
-
+        return compact('name', 'type', 'arguments', 'options');
     }
-
     /**
      * Parse any given options into something usable.
      *

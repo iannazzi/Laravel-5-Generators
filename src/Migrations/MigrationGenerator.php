@@ -17,34 +17,100 @@ class MigrationGenerator extends BaseGenerator
         $this->makeMigration($migration_name, $migration_path, $schema);
     }
 
-    public function makeMigrationFromExistingDatabase($connection, $migration_path, $table, $map)
+    function makeMigrationFromExistingDatabase($connection, $migration_path, $map)
     {
-        //map looks like this:
-//        $map = array(
-//        'pre_table_insert' => ['class' => $this, 'method' => 'preTableInsertFunction'],
-//            'tables'           => [
-//        'pos_binders'                            =>
-//            array(
-//                'new_name' => 'binders',
-//                'type'     => 'regular',
-//            ),]);
+
+
         $schemaGenerator = new SchemaGenerator($connection, false, false);
-        $fields = $schemaGenerator->getFields( $table );
-        $schema = (new SchemaParser)->parseFields($fields);
-        //dd($schema);
+        foreach($map['tables'] as $table => $table_map)
+        {
+            $new_table = $map['tables'][$table]['new_name'];
+
+            $this->output->writeln('Creating Migration for Table: ' . $new_table);
+
+            $fields = $schemaGenerator->getFields($table);
+            $fields = $this->dropFields($table, $fields, $map);
+
+
+            //$fields = $this->runFunctionOnFields($fields , $map);
+            $fields = $this->renameFields($table, $fields, $map);
+
+            $schema = (new SchemaParser)->parseFields($fields);
+            dd($schema);
+            $meta['action'] = 'create';
+            $meta['table'] = $new_table;
+            $schema = (new SyntaxBuilder)->create($schema, $meta);
+            $schema = $this-> modifySchema($schema ,$new_table);
+            $migration_name = 'create_' . $new_table . '_table';
+            //$compileMigrationStub = $this->compileMigrationStub($migration_name, $schema);
+
+            $this->makeMigration($migration_name, $migration_path, $schema);
+        }
 
 
 
 
-        //$schema = (new SchemaParser)->parseFields($fields);
-        //dd($schema);
-        //convert $fields
-        //conver the fields to shchema
-        $migration_name = 'create_' . $map['new_name'] . '_table.php';
-        $compileMigrationStub = $this->compileMigrationStub($migration_name, $schema);
+    }
 
-        dd($compileMigrationStub);
-        //$this->makeMigration($migration_name, $migration_path, $fields);
+    public function dropFields($table, $fields, $map)
+    {
+        if ( ! isset($map['tables'][$table]['drop_columns']))
+        {
+            return $fields;
+        }
+        $mapped_fields = [];
+        foreach ($fields as $field)
+        {
+            if ( ! in_array($field['field'], $map['tables'][$table]['drop_columns']))
+            {
+                $mapped_fields[] = $field;
+            }
+        }
+
+        return $mapped_fields;
+    }
+
+    public function renameFields($table, $fields, $map)
+    {
+        if ( ! isset($map['tables'][$table]['rename_columns']))
+        {
+
+            return $fields;
+        }
+        $return_array = [];
+        foreach ($fields as $field)
+        {
+            if (in_array($field['field'], $map['tables'][$table]['rename_columns']))
+            {
+                dd($map['rename_columns'][ $field['field'] ]);
+                $field['field'] = $map['rename_columns'][ $field['field'] ];
+                $return_array[] = $field;
+            }
+        }
+
+        return $return_array;
+    }
+    public function runFunctionOnFields($fields, $map)
+    {
+        $new_array = [];
+        foreach ($fields as $field)
+        {
+            $field['field'] = str_replace('pos_', '', $field['field']);
+            $field['field'] = str_replace('manufacturer_brand', 'brand', $field['field']);
+            $new_array[ ] = $field;
+        }
+
+        return $new_array;
+    }
+    public function modifySchema($schema, $table)
+    {
+
+        $schema = str_replace('pos_', '', $schema);
+        $schema = str_replace('manufacturer_brand', 'brand', $schema);
+        //$table = rtrim($table, "s");
+        //$schema = str_replace($table .'_', '', $schema);
+        return $schema;
+
     }
 
     public function makeMigration($migration_name, $migration_path, $schema)
@@ -59,17 +125,20 @@ class MigrationGenerator extends BaseGenerator
 
         $compileMigrationStub = $this->compileMigrationStub($migration_name, $schema);
 
-        dd($compileMigrationStub);
         $this->files->put($migration_filename, $compileMigrationStub);
 
         $this->output->writeln($migration_name . ' migration created successfully.');
 
     }
-    protected function getMigrationFileName($migration_name)
+
+    protected
+    function getMigrationFileName($migration_name)
     {
-        return  date('Y_m_d_His') . '_' . $migration_name . '.php';
+        return date('Y_m_d_His') . '_' . $migration_name . '.php';
     }
-    protected function compileMigrationStub($migration_name, $schema)
+
+    protected
+    function compileMigrationStub($migration_name, $schema)
     {
         $stub = $this->files->get(__DIR__ . '/../stubs/migration.stub');
         $name_parser = new NameParser();
@@ -81,7 +150,8 @@ class MigrationGenerator extends BaseGenerator
         return $stub;
     }
 
-    protected function replaceClassName(&$stub, $migration_name)
+    protected
+    function replaceClassName(&$stub, $migration_name)
     {
         $className = ucwords(camel_case($migration_name));
 
@@ -89,13 +159,17 @@ class MigrationGenerator extends BaseGenerator
 
         return $this;
     }
-    protected function replaceTableName(&$stub, $table_name)
+
+    protected
+    function replaceTableName(&$stub, $table_name)
     {
         $stub = str_replace('{{table}}', $table_name, $stub);
 
         return $this;
     }
-    protected function replaceSchema(&$stub, $schema)
+
+    protected
+    function replaceSchema(&$stub, $schema)
     {
         $stub = str_replace(['{{schema_up}}', '{{schema_down}}'], $schema, $stub);
 

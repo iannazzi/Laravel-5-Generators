@@ -176,13 +176,17 @@ class SyntaxBuilder
             $impl = implode("','", $field['name']);
             $tmp = "['" . $impl . "'],'" . $field['name'][0] ."'";
 
-            return sprintf("\$table->%s(%s)", $field['type'], $tmp);
+            return sprintf("\$table->%s(%s);", $field['type'], $tmp);
         }
-        if ($field['type'] == 'text(65535)')
+        if (strpos($field['type'],'text')!== FALSE)
         {
             $field['type'] = 'text';
-            $syntax = sprintf("\$table->%s('%s')", $field['type'], $field['name']);
+            $syntax = sprintf("\$table->%s('%s');", $field['type'], $field['name']);
             return $syntax;
+        }
+        if (strpos($field['type'],'binary')!== FALSE)
+        {
+            $field['type'] = 'binary';
         }
         if (strpos($field['type'],'string')!== FALSE)
         {

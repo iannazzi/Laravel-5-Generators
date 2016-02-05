@@ -128,6 +128,7 @@ class MigrationGenerator extends BaseGenerator
         $schema = str_replace('pos_', '', $schema);
         $schema = str_replace('manufacturer_brand', 'brand', $schema);
         $schema = str_replace('purchase_order', 'po', $schema);
+        $schema = str_replace('category_id', 'product_category_id', $schema);
         //$table = rtrim($table, "s");
         //$schema = str_replace($table .'_', '', $schema);
         return $schema;

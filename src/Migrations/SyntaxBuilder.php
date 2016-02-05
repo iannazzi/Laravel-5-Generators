@@ -181,7 +181,7 @@ class SyntaxBuilder
         if (strpos($field['type'],'text')!== FALSE)
         {
             $field['type'] = 'text';
-            $syntax = sprintf("\$table->%s('%s');", $field['type'], $field['name']);
+            $syntax = sprintf("\$table->%s('%s')->nullable();", $field['type'], $field['name']);
             return $syntax;
         }
         if (strpos($field['type'],'binary')!== FALSE)

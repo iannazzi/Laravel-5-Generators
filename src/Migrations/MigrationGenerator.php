@@ -2,6 +2,7 @@
 
 namespace Iannazzi\Generators\Migrations;
 
+use File;
 use Iannazzi\Generators\BaseGenerator;
 use Iannazzi\Generators\Migrations\NameParser;
 use Iannazzi\Generators\Migrations\SchemaParser;
@@ -19,7 +20,7 @@ class MigrationGenerator extends BaseGenerator
 
     function makeMigrationFromExistingDatabase($connection, $migration_path, $map)
     {
-
+        $this->removemigrations($migration_path, $map);
 
         $schemaGenerator = new SchemaGenerator($connection, true, true);
         foreach($map['tables'] as $table => $table_map)
@@ -54,6 +55,40 @@ class MigrationGenerator extends BaseGenerator
 
 
     }
+    public function makeMigration($table_name,$migration_name, $migration_path, $schema)
+    {
+        $this->migration_name = $migration_name;
+        $migration_filename = $migration_path . '/' . $this->getMigrationFileName($migration_name);
+        if ($this->files->exists($migration_filename))
+        {
+            dd($migration_filename . ' already exists!');
+        }
+        $this->makeDirectory($migration_filename);
+
+        $compileMigrationStub = $this->compileMigrationStub($table_name, $migration_name, $schema);
+
+        $this->files->put($migration_filename, $compileMigrationStub);
+
+        $this->output->writeln($migration_name . ' migration created successfully.');
+
+    }
+    public function removemigrations($path, $map)
+    {
+        $files = File::files($path);
+        foreach($files as $file)
+        {
+            foreach($map['tables'] as $original_name => $new_array )
+            {
+                $migration_name = 'create_' . $new_array['new_name'] . '_table';
+                if(strpos(basename($file), $migration_name) !== false)
+                {
+                    $this->output->writeln('delete_file' . basename($file));
+                    File::delete($file);
+                }
+
+            }
+        }
+    }
 
     public function dropFields($table, $fields, $map)
     {
@@ -72,7 +107,6 @@ class MigrationGenerator extends BaseGenerator
 
         return $mapped_fields;
     }
-
     public function renameFields($table, $fields, $map)
     {
 
@@ -109,6 +143,7 @@ class MigrationGenerator extends BaseGenerator
         }
         return $field;
     }
+
     public function runFunctionOnFields($fields, $map)
     {
         $new_array = [];
@@ -128,28 +163,19 @@ class MigrationGenerator extends BaseGenerator
         $schema = str_replace('pos_', '', $schema);
         $schema = str_replace('manufacturer_brand', 'brand', $schema);
         $schema = str_replace('purchase_order', 'po', $schema);
-        $schema = str_replace('category_id', 'product_category_id', $schema);
+        $schema = str_replace("\$table->unique(['promotion_id','product_id','product_category_id'],'promotion_id');", '', $schema);
+        $schema = str_replace("\$table->unique(['local_tax_jurisdiction_id','state_tax_jurisdiction_id'],'local_tax_jurisdiction_id');", '', $schema);
+
+         $schema = str_replace("\$table->unique(['state_regular_sales_tax_rate_id','state_exemption_sales_tax_rate_id'],'state_regular_sales_tax_rate_id');", '', $schema);
+        $schema = str_replace("\$table->unique(['sales_invoice_id','customer_payment_id'],'sales_invoice_id');",'',$schema);
+        $schema = str_replace("\$table->unique(['sales_invoice_id','promotion_id'],'sales_invoice_id');",'',$schema);
+        $schema = str_replace("\$table->unique(['default_gift_card_account_id','default_store_credit_account_id','default_prepay_account_id'],'default_gift_card_account_id');",'',$schema);
+
+
+        //this one fucks up pos_sales_tax_category_id and purchase order categry id $schema = str_replace('category_id', 'product_category_id', $schema);
         //$table = rtrim($table, "s");
         //$schema = str_replace($table .'_', '', $schema);
         return $schema;
-
-    }
-
-    public function makeMigration($table_name,$migration_name, $migration_path, $schema)
-    {
-        $this->migration_name = $migration_name;
-        $migration_filename = $migration_path . '/' . $this->getMigrationFileName($migration_name);
-        if ($this->files->exists($migration_filename))
-        {
-            dd($migration_filename . ' already exists!');
-        }
-        $this->makeDirectory($migration_filename);
-
-        $compileMigrationStub = $this->compileMigrationStub($table_name, $migration_name, $schema);
-
-        $this->files->put($migration_filename, $compileMigrationStub);
-
-        $this->output->writeln($migration_name . ' migration created successfully.');
 
     }
 

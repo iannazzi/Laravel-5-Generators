@@ -301,7 +301,7 @@ class DatabaseMigrationMap
                     array(
                         'new_name' => 'products',
                         'type' => 'regular',
-                        'drop_columns' => ['pos_manufacturer_id', 'product_id', 'is_taxable',],
+                        'drop_columns' => ['pos_manufacturer_id', 'product_id', 'is_taxable','tax_class_id'],
                         'rename_columns' => ['pos_product_id' => 'id', 'pos_category_id'=>'product_category_id'],
                     ),
                 'pos_products_attributes' =>

@@ -6,14 +6,11 @@ namespace Iannazzi\Generators\Commands;
 use Artisan;
 use Illuminate\Console\Command;
 
-class CreateSystemsCommand extends Command
+class InitializeSystemsCommand extends Command
 {
-    /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
-    protected $signature = 'zz:CreateSystems
+    //this should get me up and running????
+
+    protected $signature = 'zz:InitializeSystems
                              {--test=false : If True I will import only 100 rows from the database}';
 
     /**
@@ -40,8 +37,9 @@ class CreateSystemsCommand extends Command
      */
     public function handle()
     {
+        $db = 'POS';
         $test = $this->option('test');
-        Artisan::call('zz:CreateMigrationsFromDatabase', [
+        Artisan::call('zz:CreateMigrationsFromDatabase POS', [
 
         ]);
         Artisan::call('zz:DeleteAllSystems', [

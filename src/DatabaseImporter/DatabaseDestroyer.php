@@ -7,6 +7,7 @@ use DB;
 
 class DatabaseDestroyer
 {
+    use DatabaseImporterTrait;
     public static function deleteAllTenantDatabases()
     {
         //the database name prefix can change....currently hardode...

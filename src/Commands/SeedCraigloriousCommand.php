@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Console\Commands;
+namespace Iannazzi\Generators\Commands;
 
 use Artisan;
 use Illuminate\Console\Command;

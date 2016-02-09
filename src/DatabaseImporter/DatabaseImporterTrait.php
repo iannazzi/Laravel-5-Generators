@@ -10,6 +10,14 @@ trait DatabaseImporterTrait
         $out = new ConsoleOutput();
         $out->writeln($msg);
     }
+    public function out($msg)
+    {
+        $this->console($msg);
+    }
+    public function output($msg)
+    {
+        $this->console($msg);
+    }
 
 
 }

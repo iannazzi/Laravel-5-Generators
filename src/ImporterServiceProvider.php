@@ -28,10 +28,11 @@ class ImporterServiceProvider extends ServiceProvider
 
         $this->registerCommand('CreateMigrationsFromDatabaseCommand');
         $this->registerCommand('CreateModelsFromDatabaseCommand');
-        $this->registerCommand('CreateSystemsCommand');
+        $this->registerCommand('InitializeSystemsCommand');
         $this->registerCommand('DeleteAllSystemsCommand');
         $this->registerCommand('ImportDatabaseCommand');
         $this->registerCommand('MigrateCraigloriousCommand');
+        $this->registerCommand('SeedCraigloriousCommand');
 
     }
 

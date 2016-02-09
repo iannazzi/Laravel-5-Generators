@@ -1,6 +1,6 @@
 <?php
 
-namespace Iannazzi\Generators\ArrayOperator;
+namespace Iannazzi\Generators\DatabaseImporter;
 
 
 class ArrayOperator

@@ -3,8 +3,6 @@
 namespace Iannazzi\Generators\DatabaseImporter;
 
 
-use Iannazzi\Generators\DatabaseImporter\ArrayOperator;
-use App\Classes\Database\DatabaseModifier;
 use App\Models\Craiglorious\System;
 use DB;
 use Schema;
@@ -13,13 +11,14 @@ class DatabaseDataImporter
 {
     use DatabaseImporterTrait;
     protected $test;
-    protected $databaseModifier;
+    protected $databaseDestroyer;
+    protected $source_connection;
 
     public function __construct($source_connection, $test)
     {
         $this->test = $test;
         $this->source_connection = $source_connection;
-        $this->databaseModifier = new DatabaseModifier($test);
+        $this->databaseDestroyer = new DatabaseDestroyer();
     }
 
     public function importEmbrasseMoiData()
@@ -75,7 +74,7 @@ class DatabaseDataImporter
 
     public function copyTable($souce_connection, $source_table, $dest_connection, $dest_table, $map)
     {
-        $this->databaseModifier->emptyTable($dest_connection, $dest_table);
+        $this->databaseDestroyer->emptyTable($dest_connection, $dest_table);
         if ( ! isset($map['tables'][ $source_table ]['import_data']))
         {
             $num_chunk_records = 1000;
@@ -85,9 +84,8 @@ class DatabaseDataImporter
             DB::connection($souce_connection)->table($source_table)->chunk($num_chunk_records, function ($data_chunk)
             use ($me, $dest_connection, $source_table, $dest_table, $map, $num_chunk_records)
             {
-                //migrateTableColumns($data, $table, $migration_map)
                 $data_chunk = $this->preEntryMap($data_chunk, $source_table, $dest_table, $map);
-                $this->databaseModifier->loadDataIntoTable($dest_connection, $dest_table, $data_chunk);
+                $this->loadDataIntoTable($dest_connection, $dest_table, $data_chunk);
                 if ($this->test) return false;
 
             });
@@ -164,118 +162,33 @@ class DatabaseDataImporter
 
     }
 
-    public function getSeedTables($db_name)
+    public function loadDataIntoTable($dbc, $table, $data)
     {
-        $databaseMigrator = new DatabaseMigrationCreator($this->test);
-
-        $migration_files = $databaseMigrator->getMigrationFiles($db_name);
-
-        $migration_tables = $databaseMigrator->getMigrationTableName($migration_files);
-
-        $startup_data_tables = $this->getStartupDataTables($db_name);
-
-        //$databaseSeeder = new DatabaseSeeder($this->test);
-        $tables_to_seed = DatabaseSeederCreator::selectTablesToSeed($migration_tables, $startup_data_tables);
-
-        return $tables_to_seed;
-    }
-
-
-    public function getStartupDataTables($db_name)
-    {
-        $databaseSeeder = new DatabaseSeederCreator($this->test);
-        $startup_data_tables = $databaseSeeder->getStartupCSVTableNames($db_name);
-
-        return $startup_data_tables;
-    }
-
-    public function getStartupSeedFiles($db)
-    {
-        //$db is tenant or craiglorious
-        $directory = database_path("seeds/csv_startup_data/" . $db);
-        $files = \File::allFiles($directory);
-
-        return $files;
-    }
-
-    public function getStartupCSVTableNames($db)
-    {
-        $startup_data_files = $this->getStartupSeedFiles($db);
-
-        $tables = [];
-        foreach ($startup_data_files as $file)
+        $this->console('Loading data to table ' . $table);
+        foreach ($data as $row)
         {
-            //get the name and make it a seeder...
-            $table = basename((string) $file, '.csv');
-            $tables[] = $table;
-        }
-
-        return $tables;
-    }
-
-    public static function selectTablesToSeed($migration_tables, $startup_data_tables)
-    {
-        $tables_to_seed = [];
-
-        foreach ($migration_tables as $table)
-        {
-            if ( ! in_array($table, $startup_data_tables))
-            {
-                $tables_to_seed[] = $table;
-            }
-        }
-
-        return $tables_to_seed;
-    }
-
-
-    //these appear to be dead functions
-    public function seedTableData($table, array $seed_map)
-    {
-        dd('dead function seedTableData?');
-        foreach ($seed_map as $table_to_modify => $seed_code)
-        {
-            if ($table == $table_to_modify)
-            {
-                if (isset($seed_map['seed_columns']))
-                {
-                    $columns = $seed_map['seed_columns'];
-                    $this->seedDataColumns($table, $columns);
-
-                }
-            }
+            $this->insertRow($dbc, $table, $row);
         }
     }
 
-    public function seedDataColumns($table, array $populate_columns)
+    public function insertRow($dbc, $table, $row)
     {
-        dd('dead function seedDataColumns?');
-        for ($i = 0; $i < sizeof($data); $i ++)
-        {
-            $data[ $i ] = $this->seedDataRowColumns($data[ $i ], $populate_columns);
-        }
+        DB::Connection($dbc)->table($table)->insert($row);
+        //other than this we would need to get the models....
 
-        return $data;
     }
 
-    function seedDataRowColumns($data_row, array $populate_columns)
+    public function insertField($dbc, $table, $field, $value)
     {
-        dd('dead function seedDataRowColumns?');
-
-        foreach ($data_row as $column => $value)
+        if (Schema::Connection($dbc)->hasColumn($table, $field))
         {
-            $data_row[ $column ] = $this->seedColumnValue($column, $value, $populate_columns);
-        }
-    }
+            dd([$field => $value]);
+            DB::Connection($dbc)->table($table)->insert([$field => $value]);
 
-    function seedColumnValue($column, $value, array $populate_columns)
-    {
-        if (in_array($column, $populate_columns))
-        {
-            return eval($populate_columns[ $column ]);
+            return true;
         }
+        dd('insertField: ' . $field);
 
-        return $value;
     }
 
 

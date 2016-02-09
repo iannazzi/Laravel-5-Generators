@@ -1,23 +1,23 @@
-# Laravel 5 Extended Generators
+# Laravel 5 Database Importer
 
-[![Build Status](https://travis-ci.org/laracasts/Laravel-5-Generators-Extended.svg?branch=master)](https://travis-ci.org/laracasts/Laravel-5-Generators-Extended)
 
-If you're familiar with my [Laravel 4 Generators](https://github.com/JeffreyWay/Laravel-4-Generators), then this is basically the same thing - just upgraded for Laravel 5.
+I used this code to pull in my non-framework database to laravel.
+Using your existing database I will
+-Create Migration Files
+-Import Data
+-Create Model Files
+-Create Seed Files
+-Create Factories
+-Create A Table Definition to use with views
 
-L5 includes a bunch of generators out of the box, so this package only needs to add a few things, like:
 
-- `make:migration:schema`
-- `make:migration:pivot`
-- `make:seed`
-
-*With one or two more to come.*
 
 ## Usage
 
 ### Step 1: Install Through Composer
 
 ```
-composer require laracasts/generators --dev
+composer require iannazzi/laravel-5-generators
 ```
 
 ### Step 2: Add the Service Provider
@@ -28,7 +28,7 @@ You'll only want to use these generators for local development, so you don't wan
 public function register()
 {
 	if ($this->app->environment() == 'local') {
-		$this->app->register('Iannazzi\Generators\GeneratorsServiceProvider');
+		$this->app->register('Iannazzi\Generators\ImporterServiceProvider');
 	}
 }
 ```
@@ -36,7 +36,7 @@ public function register()
 
 ### Step 3: Run Artisan!
 
-You're all set. Run `php artisan` from the console, and you'll see the new commands in the `make:*` namespace section.
+You're all set. Run `php artisan list` from the console, and you'll see the new commands in the `make:*` namespace section.
 
 ## Examples
 

@@ -159,7 +159,7 @@ class MigrationGenerator extends BaseGenerator
 
     public function modifySchema($schema, $table)
     {
-
+        $this->output->writeln('Modifying Schema... Have no Idea what is going on with indexes ');
         $schema = str_replace('pos_', '', $schema);
         $schema = str_replace('manufacturer_brand', 'brand', $schema);
         $schema = str_replace('purchase_order', 'po', $schema);
@@ -170,6 +170,8 @@ class MigrationGenerator extends BaseGenerator
         $schema = str_replace("\$table->unique(['sales_invoice_id','customer_payment_id'],'sales_invoice_id');",'',$schema);
         $schema = str_replace("\$table->unique(['sales_invoice_id','promotion_id'],'sales_invoice_id');",'',$schema);
         $schema = str_replace("\$table->unique(['default_gift_card_account_id','default_store_credit_account_id','default_prepay_account_id'],'default_gift_card_account_id');",'',$schema);
+        $schema = str_replace("\$table->unique(['first_name','last_name'],'first_name');",'',$schema);
+        $schema = str_replace("\$table->unique(['product_image_id','product_id'],'product_image_id');",'',$schema);
 
 
         //this one fucks up pos_sales_tax_category_id and purchase order categry id $schema = str_replace('category_id', 'product_category_id', $schema);

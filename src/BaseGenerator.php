@@ -27,6 +27,19 @@ class BaseGenerator
         DatabaseConnector::addConnections();
     }
 
+    protected static function getModelName($table_name)
+    {
+        return ucwords(str_singular(camel_case($table_name)));
+    }
+
+    public function getNamespace($app_name, $model_path)
+    {
+        $namespace = str_replace(app_path(), '', $model_path);
+        $namespace = $app_name . str_replace('/', '\\', $namespace);
+
+        return $namespace;
+    }
+
     protected function getFields($dbc, $table, $map)
     {
         $schemaGenerator = new SchemaGenerator($dbc, true, true);
@@ -48,20 +61,26 @@ class BaseGenerator
         $files = File::files($path);
         foreach($files as $file)
         {
-            foreach($map['tables'] as $original_name => $new_array )
-            {
-                $file_name = $nameFunction($new_array['new_name']);
-                if(strpos(basename($file), $file_name) !== false)
-                {
-                    $this->output->writeln('delete_file' . basename($file));
-                    File::delete($file);
-                }
-
-            }
+            $this->removeFile($file, $map, $nameFunction);
         }
         $this->output->writeln('File Removal Complete');
     }
-
+    public function removeFile($file, $map, $nameFunction)
+    {
+        foreach($map['tables'] as $original_name => $new_array )
+        {
+            $file_name = $nameFunction($new_array['new_name']);
+            if(strpos(basename($file), $file_name) !== false)
+            {
+               $this->deleteFile($file_name);
+            }
+        }
+    }
+    public function deleteFile($file_name)
+    {
+        $this->output->writeln('Deleting File ' . basename($file_name));
+        File::delete($file_name);
+    }
     public function dropFields($table, $fields, $map)
     {
         if ( ! isset($map['tables'][ $table ]['drop_columns']))

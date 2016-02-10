@@ -1,0 +1,7 @@
+<?php
+
+$factory->define({{namespace_model}}::class, function (Faker\Generator $faker) {
+    return [
+        {{factory}}
+    ];
+});

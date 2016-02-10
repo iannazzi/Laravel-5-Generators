@@ -22,14 +22,14 @@ class DatabaseModelCreator
         $craiglorious_tables_map = DatabaseMigrationMap::getCraigloriousTablesFromBluehost();
         $tenant_tables_map = DatabaseMigrationMap::getTenantTablesFromBluehost();
 
-        $test = $tenant_tables_map['tables']['pos_products'];
-        $tenant_tables_map['tables'] = [];
-        $tenant_tables_map['tables']['pos_products'] =  $test;
+//        $test = $tenant_tables_map['tables']['pos_products'];
+//        $tenant_tables_map['tables'] = [];
+//        $tenant_tables_map['tables']['pos_products'] =  $test;
 
         $modelGenerator = new ModelGenerator();
-        $tenant_migration_path = self::getModelPath() . '/TenantTest';
+        $tenant_migration_path = self::getModelPath() . '/Tenant';
         $modelGenerator->makeModelsFromExistingDatabase($dbc, $tenant_migration_path, $tenant_tables_map);
-        $cg_migration_path = self::getModelPath() . '/CraigloriousTest';
+        $cg_migration_path = self::getModelPath() . '/Craiglorious';
         $modelGenerator->makeModelsFromExistingDatabase($dbc, $cg_migration_path, $craiglorious_tables_map);
 
     }

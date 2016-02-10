@@ -2,6 +2,7 @@
 
 namespace Iannazzi\Generators\Models;
 
+use App\Classes\Library\ArrayOperator;
 use File;
 use Iannazzi\Generators\BaseGenerator;
 use Iannazzi\Generators\Migrations\SchemaGenerator;
@@ -13,11 +14,11 @@ class ModelGenerator extends BaseGenerator
 
 
 
-       $this->removeFiles($model_path, $map, function ($name)
+       /*$this->removeFiles($model_path, $map, function ($name)
        {
            return self::getModelName($name);
 
-       });
+       });*/
 
        foreach ($map['tables'] as $table => $table_map)
        {
@@ -31,15 +32,18 @@ class ModelGenerator extends BaseGenerator
            $table_type = $map['tables'][ $table ]['type'];
            if($table_type == 'pivot') continue;
 
-
            $model_name = $this->getModelName($map['tables'][ $table ]['new_name']);
+           $file_name = $model_path . '/'.$model_name . '.php';
+
+           $this->deleteFile($file_name);
 
            $this->output->writeln('Creating Model File  ' . $model_name);
 
            $fields = $this->getFields($dbc,$table, $map);
 
-           //dd($fields);
-           $contents ='wtf';
+           $contents['fillable'] = $this->getFillable($fields);
+
+
 
 //           $schema = (new SchemaParser)->parseFields($fields);
 //           $meta['action'] = 'create';
@@ -52,9 +56,23 @@ class ModelGenerator extends BaseGenerator
        }
 
    }
-    protected static function getModelName($table_name)
+    protected function getFillable($fields)
     {
-        return ucwords(str_singular(camel_case($table_name)));
+        $return_array = [];
+        foreach($fields as $field)
+        {
+            if(is_array($field['field']))
+            {
+                continue;
+            }
+            if($field['type'] == 'increments')
+            {
+                continue;
+            }
+            $return_array[] = $field['field'];
+        }
+        return $return_array;
+
     }
     protected function makeModel($model_name, $model_path, $contents)
     {
@@ -67,7 +85,7 @@ class ModelGenerator extends BaseGenerator
 
         $compileModelStub = $this->compileModelStub($model_path, $model_name, $contents);
 
-        dd($compileModelStub);
+        //dd($compileModelStub);
 
         $this->files->put($model_filename, $compileModelStub);
 
@@ -81,18 +99,12 @@ class ModelGenerator extends BaseGenerator
     {
         $stub = $this->files->get(__DIR__ . '/../stubs/model.stub');
         $this->replaceClassName($stub, $model_name)
-            ->replaceFillable($stub, '123')
+            ->replaceFillable($stub, $contents['fillable'])
             ->replaceNamespace($stub, $model_path);
 
         return $stub;
     }
 
-    public function getNamespace($app_name, $model_path)
-    {
-        $namespace =  str_replace(app_path(), '', $model_path);
-        $namespace = $app_name . str_replace('/', '\\', $namespace);
-        return $namespace;
-    }
     protected function replaceNamespace(&$stub, $model_path)
     {
         $namespace = $this->getNamespace('App', $model_path);
@@ -107,7 +119,8 @@ class ModelGenerator extends BaseGenerator
     protected function replaceFillable(&$stub, $fillable)
     {
 
-        $stub = str_replace('{{fillable}}', $fillable, $stub);
+        $fillable = ArrayOperator::exportArrayAsString($fillable);
+        $stub = str_replace('{{fillable}}',$fillable, $stub);
 
         return $this;
     }

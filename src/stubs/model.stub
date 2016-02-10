@@ -1,9 +1,12 @@
 <?php namespace {{namespace}};
 
-use Illuminate\Database\Eloquent\Model;
+use App\Models\BaseModel;
 
-class {{class}} extends Model {
+class {{class}} extends BaseModel {
 
-	protected $fillable = [{{fillable}}];
+
+	protected $fillable = [{{fillable}}
+	    ];
+
 
 }

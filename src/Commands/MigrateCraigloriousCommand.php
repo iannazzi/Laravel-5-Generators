@@ -38,11 +38,17 @@ class MigrateCraigloriousCommand extends Command
      */
     public function handle()
     {
+        //php artisan migrate --path="database/migrations/craiglorious" --database ="craiglorious"
 
-            Artisan::call('migrate', [
+        //php artisan migrate --path="database/migrations/craiglorious" --database="test_craiglorious"
+        Artisan::call('migrate', [
                 '--path' => "database/migrations/craiglorious",
                 '--database' => 'craiglorious',
             ]);
+        Artisan::call('migrate', [
+            '--path' => "database/migrations/craiglorious",
+            '--database' => 'test_craiglorious',
+        ]);
 
 
     }

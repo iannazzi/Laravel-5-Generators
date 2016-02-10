@@ -24,10 +24,9 @@ class ImporterServiceProvider extends ServiceProvider
     public function register()
     {
 
-
-
         $this->registerCommand('CreateMigrationsFromDatabaseCommand');
         $this->registerCommand('CreateModelsFromDatabaseCommand');
+        $this->registerCommand('CreateFactoriesFromDatabaseCommand');
         $this->registerCommand('InitializeSystemsCommand');
         $this->registerCommand('DeleteAllSystemsCommand');
         $this->registerCommand('ImportDatabaseCommand');

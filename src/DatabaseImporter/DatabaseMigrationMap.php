@@ -13,13 +13,7 @@ class DatabaseMigrationMap
             'pre_table_insert' => ['BluehostMigrationMap', 'preTableInsertFunction'],
             'preFieldRenameFunction' => ['BluehostMigrationMap', 'preFieldRenameFunction'],
             'tables' => [
-                'pos_account_type' =>
-                    array(
-                        'new_name' => 'account_types',
-                        'type' => 'regular',
-                        'rename_columns' => ['pos_account_type_id' => 'id'],
 
-                    ),
                 'pos_accounts' =>
                     array(
                         'new_name' => 'accounts',
@@ -46,13 +40,7 @@ class DatabaseMigrationMap
                         'rename_columns' => ['pos_category_id' => 'id'],
 
                     ),
-                'pos_chart_of_account_types' =>
-                    array(
-                        'new_name' => 'chart_of_account_types',
-                        'type' => 'regular',
-                        'rename_columns' => ['pos_chart_of_account_type_id' => 'id'],
 
-                    ),
                 'pos_chart_of_accounts' =>
                     array(
                         'new_name' => 'chart_of_accounts',
@@ -77,13 +65,7 @@ class DatabaseMigrationMap
                         'new_name' => 'customer_email',
                         'type' => 'pivot',
                     ),
-                'pos_customer_payment_methods' =>
-                    array(
-                        'new_name' => 'customer_payment_methods',
-                        'type' => 'regular',
-                        'rename_columns' => ['pos_customer_payment_method_id' => 'id'],
 
-                    ),
                 'pos_customer_payments' =>
                     array(
                         'new_name' => 'customer_payments',
@@ -170,7 +152,8 @@ class DatabaseMigrationMap
                     array(
                         'new_name' => 'invoice_payment',
                         'type' => 'pivot',
-                        'rename_columns' => ['pos_journal_id' => 'invoice_id'],
+                        'rename_columns' => ['pos_journal_id' => 'invoice_id',
+                        'pos_payments_journal_id' => 'payment_id'],
 
                     ),
                 'pos_journal_to_coa_link' =>
@@ -237,7 +220,7 @@ class DatabaseMigrationMap
                     ),
                 'pos_payments_journal' =>
                     array(
-                        'new_name' => 'payments_journal',
+                        'new_name' => 'payments',
                         'type' => 'regular',
                         'rename_columns' => ['pos_payments_journal_id' => 'id'],
 
@@ -266,6 +249,8 @@ class DatabaseMigrationMap
                 'pos_product_images' =>
                     array(
                         'new_name' => 'product_images',
+                        'make_factory' => 'false',
+
                         'type' => 'regular',
                         'rename_columns' => ['pos_product_image_id' => 'id'],
 
@@ -273,6 +258,8 @@ class DatabaseMigrationMap
                 'pos_product_options' =>
                     array(
                         'new_name' => 'product_options',
+                        'make_factory' => 'false',
+
                         'type' => 'regular',
                         'rename_columns' => ['pos_product_option_id' => 'id'],
 
@@ -492,7 +479,9 @@ class DatabaseMigrationMap
                     ),
                 'pos_user_log' =>
                     array(
-                        'new_name' => 'user_accesses',
+                        'new_name' => 'user_hits',
+                        'make_factory' => 'false',
+
                         'import_data' => false,
                         'type' => 'regular',
                         'rename_columns' => ['pos_user_log_id' => 'id',],
@@ -503,6 +492,7 @@ class DatabaseMigrationMap
                     array(
                         'new_name' => 'users',
                         'type' => 'regular',
+                        'make_model' => 'false',
                         'drop_columns' => ['database_access',
                             'default_room',
                             'default_start_page',
@@ -557,15 +547,37 @@ class DatabaseMigrationMap
             'preFieldRenameFunction' => ['BluehostMigrationMap', 'preFieldRenameFunction'],
 
             'tables' => [
+                'pos_account_type' =>
+                    array(
+                        'make_factory' => 'false',
+
+                        'new_name' => 'account_types',
+                        'type' => 'regular',
+                        'rename_columns' => ['pos_account_type_id' => 'id'],
+
+                    ),
                 'pos_binders' =>
                     array(
+                        'make_factory' => 'false',
+
                         'new_name' => 'binders',
                         'type' => 'regular',
                         'rename_columns' => ['pos_binder_id' => 'id'],
 
                     ),
+                'pos_chart_of_account_types' =>
+                    array(
+                        'make_factory' => 'false',
+
+                        'new_name' => 'chart_of_account_types',
+                        'type' => 'regular',
+                        'rename_columns' => ['pos_chart_of_account_type_id' => 'id'],
+
+                    ),
                 'pos_chart_of_accounts_required' =>
                     array(
+                        'make_factory' => 'false',
+
                         'new_name' => 'chart_of_accounts_required',
                         'type' => 'regular',
                         'rename_columns' => ['pos_chart_of_accounts_required_id' => 'id'],
@@ -573,6 +585,8 @@ class DatabaseMigrationMap
                     ),
                 'pos_counties' =>
                     array(
+                        'make_factory' => 'false',
+
                         'new_name' => 'counties',
                         'type' => 'regular',
                         'rename_columns' => ['pos_county_id' => 'id'],
@@ -580,13 +594,24 @@ class DatabaseMigrationMap
                     ),
                 'pos_currencies' =>
                     array(
+                        'make_factory' => 'false',
+
                         'new_name' => 'currencies',
                         'type' => 'regular',
                         'rename_columns' => ['pos_currency' => 'id'],
 
                     ),
+                'pos_customer_payment_methods' =>
+                    array(
+                        'new_name' => 'customer_payment_methods',
+                        'type' => 'regular',
+                        'rename_columns' => ['pos_customer_payment_method_id' => 'id'],
+
+                    ),
                 'pos_manufacturer_upc' =>
                     array(
+                        'make_factory' => 'false',
+
                         'new_name' => 'manufacturer_upcs',
                         'type' => 'regular',
                         'import_data' => false,
@@ -595,6 +620,8 @@ class DatabaseMigrationMap
                     ),
                 'pos_sales_tax_categories' =>
                     array(
+                        'make_factory' => 'false',
+
                         'new_name' => 'sales_tax_categories',
                         'type' => 'regular',
                         'rename_columns' => ['pos_sales_tax_category_id' => 'id'],
@@ -603,6 +630,8 @@ class DatabaseMigrationMap
 
                 'pos_sales_tax_rates' =>
                     array(
+                        'make_factory' => 'false',
+
                         'new_name' => 'sales_tax_rates',
                         'type' => 'regular',
                         'rename_columns' => ['pos_sales_tax_rate_id' => 'id'],
@@ -611,6 +640,8 @@ class DatabaseMigrationMap
 
                 'pos_states' =>
                     array(
+                        'make_factory' => 'false',
+
                         'new_name' => 'states',
                         'type' => 'regular',
                         'rename_columns' => ['pos_state_id' => 'id'],
@@ -618,6 +649,8 @@ class DatabaseMigrationMap
                     ),
                 'pos_tax_jurisdictions' =>
                     array(
+                        'make_factory' => 'false',
+
                         'new_name' => 'tax_jurisdictions',
                         'type' => 'regular',
                         'rename_columns' => ['pos_tax_jurisdiction_id' => 'id'],
@@ -626,6 +659,8 @@ class DatabaseMigrationMap
 
                 'pos_zip_codes' =>
                     array(
+                        'make_factory' => 'false',
+
                         'new_name' => 'zip_codes',
                         'type' => 'regular',
                         'rename_columns' => ['pos_zip_code_id' => 'id'],

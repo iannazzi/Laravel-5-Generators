@@ -15,7 +15,8 @@ class DatabaseDestroyer
         $databases = DB::connection('main')->select('Show databases');
         for ($i = 0; $i < sizeof($databases); $i ++)
         {
-            $dbn = $databases[ $i ]['Database'];
+            //$dbn = $databases[ $i ]['Database'];
+            $dbn = $databases[ $i ]->Database;
 
             if (strpos($dbn, $prefix) !== false)
             {

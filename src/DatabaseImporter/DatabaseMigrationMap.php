@@ -261,7 +261,8 @@ class DatabaseMigrationMap
                         'make_factory' => 'false',
 
                         'type' => 'regular',
-                        'rename_columns' => ['pos_product_option_id' => 'id'],
+                        'rename_columns' => ['pos_product_option_id' => 'id',
+                                            'option_name' => 'value'],
 
                     ),
                /* 'pos_product_secondary_categories' =>
@@ -302,7 +303,8 @@ class DatabaseMigrationMap
                     array(
                         'new_name' => 'product_skus',
                         'type' => 'regular',
-                        'rename_columns' => ['pos_products_sub_id' => 'id'],
+                        'rename_columns' => ['pos_products_sub_id' => 'id',
+                                            'product_upc' => 'upc'],
 
 
                     ),

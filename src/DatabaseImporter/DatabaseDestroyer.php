@@ -3,6 +3,7 @@
 namespace Iannazzi\Generators\DatabaseImporter;
 
 
+use App\Classes\Database\TenantDatabaseConnector;
 use DB;
 
 class DatabaseDestroyer
@@ -10,9 +11,8 @@ class DatabaseDestroyer
     use DatabaseImporterTrait;
     public static function deleteAllTenantDatabases()
     {
-        //the database name prefix can change....currently hardode...
-        $prefix = 'cs_';
-        $databases = DB::connection('craiglorious')->select('Show databases');
+        $prefix = TenantDatabaseConnector::GetDBCPrefix();
+        $databases = DB::connection('main')->select('Show databases');
         for ($i = 0; $i < sizeof($databases); $i ++)
         {
             $dbn = $databases[ $i ]['Database'];
@@ -21,34 +21,31 @@ class DatabaseDestroyer
             {
                 $sql = 'Drop Database ' . $dbn;
                 echo 'Deleting ' . $dbn . PHP_EOL;
-                DB::connection('craiglorious')->statement($sql);
+                DB::connection('main')->statement($sql);
             }
         }
     }
-    public function emptyTable($dbc, $table)
+    public static function emptyTable($dbc, $table)
     {
         //only empty on the tenant connection
         $msg = 'Truncation ' . $table . ' On Connection ' . $dbc;
-        $this->console($msg);
+        self::console($msg);
         DB::connection($dbc)->table($table)->truncate();
         //$delete_q = "Delete From " . $table . " where 1";
         //DB::connection($this->tdbc)->statement($delete_q);
     }
-    public function dropAllTables($dbc)
+    public static function dropAllTables($dbc)
     {
         $tables = DatabaseSelector::getTables($dbc);
         foreach($tables as $table)
         {
-
-            $this->dropTable($dbc, $table);
+            self::dropTable($dbc, $table);
         }
     }
-    public function dropTable($dbc, $table)
+    public static function dropTable($dbc, $table)
     {
         DB::connection($dbc)->statement("Drop table " . $table);
-
-
         $msg = 'Dropped table ' . $table . ' On Connection ' . $dbc;
-        $this->console($msg);
+        self::console($msg);
     }
 }

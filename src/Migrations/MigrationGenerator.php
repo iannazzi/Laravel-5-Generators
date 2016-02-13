@@ -42,12 +42,6 @@ class MigrationGenerator extends BaseGenerator
 
     }
 
-    public static function getMigrationName($name)
-    {
-        return 'create_' . $name . '_table';
-
-    }
-
     public function makeMigration($table_name, $migration_name, $migration_path, $schema)
     {
         $this->migration_name = $migration_name;
@@ -65,9 +59,6 @@ class MigrationGenerator extends BaseGenerator
         $this->output->writeln($migration_name . ' migration created successfully.');
 
     }
-
-
-
 
     public function modifySchema($schema, $table)
     {
@@ -90,6 +81,15 @@ class MigrationGenerator extends BaseGenerator
         //$table = rtrim($table, "s");
         //$schema = str_replace($table .'_', '', $schema);
         return $schema;
+
+    }
+
+
+
+
+    public static function getMigrationName($name)
+    {
+        return 'create_' . $name . '_table';
 
     }
 

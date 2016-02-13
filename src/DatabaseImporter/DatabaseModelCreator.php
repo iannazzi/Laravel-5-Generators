@@ -10,6 +10,7 @@ class DatabaseModelCreator
     public static function getModelPath()
     {
         $path = app_path() . '/Models';
+        $path = base_path() . '/database/exports/Models';
         return $path;
     }
     public static function getModelNamespace()

@@ -72,7 +72,7 @@ class BaseGenerator
             $file_name = $nameFunction($new_array['new_name']);
             if(strpos(basename($file), $file_name) !== false)
             {
-               $this->deleteFile($file_name);
+               $this->deleteFile($file);
             }
         }
     }

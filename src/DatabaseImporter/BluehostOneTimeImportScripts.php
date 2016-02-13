@@ -28,30 +28,7 @@ class BluehostOneTimeScripts
 
 
 
-    public function exportDefaultData($path, $sql_array)
-	{
 
-		$file = new CIFile();
-		$dbpos = new CIDatabaseManager('POS');
-
-		//$sql['pos_categories'] = 'Select pos_category_id, name, parent, pos_sales_tax_category_id, default_product_priority, active From pos_categories';
-    	//$sql['pos_user_groups'] = 'Select * From pos_user_groups';
-    	//$sql['pos_chart_of_accounts'] = 'Select * From pos_chart_of_accounts';
-    	//$sql['pos_discounts'] = 'Select * From pos_discounts';
-		// settings looks fucked up..... 
-		//$sql['pos_settings'] = 'Select * From pos_settings';
-
-    	foreach($sql_array as $key => $value)
-    	{
-    		$data = DB::connection('POS')->select($value);
-    		//$data = $dbpos->getSQL($value);
-    		dd($data);
-    		$filename =  $path . "/" . $key . '.csv';
-    		//dd($filename);
-    		$file->arrayToCSVFile($filename, $data, ';', false, true);
-    	}
-    	
-	}
 	public function fix_pos_name()
 	{
 		$directory = database_path("seeds/csv_startup_data/tenant");

@@ -293,13 +293,14 @@ class DatabaseMigrationMap
                     ),
                 'pos_products_attributes' =>
                     array(
-                        'new_name' => 'products_attributes',
+                        'new_name' => 'product_attributes',
                         'type' => 'regular',
-                        'rename_columns' => ['pos_products_attribute_id' => 'id'],
+                        'rename_columns' => ['pos_products_attribute_id' => 'id',
+                            'attribute_name' => 'name'],
                     ),
                 'pos_products_sub_id' =>
                     array(
-                        'new_name' => 'products_skus',
+                        'new_name' => 'product_skus',
                         'type' => 'regular',
                         'rename_columns' => ['pos_products_sub_id' => 'id'],
 

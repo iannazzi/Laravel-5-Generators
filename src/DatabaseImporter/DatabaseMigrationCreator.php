@@ -24,6 +24,7 @@ class DatabaseMigrationCreator
 
 
         $path = base_path() . '/database/migrations';
+        $path = base_path() . '/database/exports/migrations';
 
         $migration_generator = new MigrationGenerator();
         $tenant_migration_path = $path . '/tenant';

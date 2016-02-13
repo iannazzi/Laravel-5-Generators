@@ -12,31 +12,6 @@ class DatabaseConnector
     public static function addConnections()
     {
         $new_connections = [
-            'BLUEHOST_POS_TEST' => [
-                'driver' => 'mysql',
-                'host' => env('BLUEHOST_POS_TEST_DB_HOST'),
-                'database' => env('BLUEHOST_POS_TEST_DB_DATABASE'),
-                'username' => env('BLUEHOST_POS_TEST_DB_USERNAME'),
-                'password' => env('BLUEHOST_POS_TEST_DB_PASSWORD'),
-                'charset' => 'utf8',
-                'collation' => 'utf8_unicode_ci',
-                'prefix' => '',
-                'strict' => false,
-                'port' => '3306'
-            ],
-            'BLUEHOST_POS01' => [
-                'driver' => 'mysql',
-                'driver' => 'mysql',
-                'host' => env('BLUEHOST_POS01_DB_HOST'),
-                'database' => env('BLUEHOST_POS01_DB_DATABASE'),
-                'username' => env('BLUEHOST_POS01_DB_USERNAME'),
-                'password' => env('BLUEHOST_POS01_DB_PASSWORD'),
-                'charset' => 'utf8',
-                'collation' => 'utf8_unicode_ci',
-                'prefix' => '',
-                'strict' => false,
-                'port' => '3306'
-            ],
             'POS' => [
                 'driver'    => 'mysql',
                 'host'      => env('DB_HOST'),
@@ -49,13 +24,13 @@ class DatabaseConnector
                 'strict'    => false,
                 'port' => '3306'
             ],
-            'BLUEHOST_POS01' => [
+            'POS_PRODUCTION' => [
                 'driver' => 'mysql',
                 'driver' => 'mysql',
-                'host' => env('BLUEHOST_POS01_DB_HOST'),
-                'database' => env('BLUEHOST_POS01_DB_DATABASE'),
-                'username' => env('BLUEHOST_POS01_DB_USERNAME'),
-                'password' => env('BLUEHOST_POS01_DB_PASSWORD'),
+                'host' => env('POS_PRODUCTION_DB_HOST'),
+                'database' => env('POS_PRODUCTION_DB_DATABASE'),
+                'username' => env('POS_PRODUCTION_DB_USERNAME'),
+                'password' => env('POS_PRODUCTION_DB_PASSWORD'),
                 'charset' => 'utf8',
                 'collation' => 'utf8_unicode_ci',
                 'prefix' => '',

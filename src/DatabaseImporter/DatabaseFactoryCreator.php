@@ -25,7 +25,8 @@ class DatabaseFactoryCreator
 //        $tenant_tables_map['tables']['pos_product_image_lookup'] =  $test;
 
 
-        $path = base_path() . '/tests/factories';
+        $path = base_path() . '/database/factories';
+        $path = base_path() . '/database/exports/factories';
         $namespace = 'App\Models';
 
         $factory_generator = new FactoryGenerator();

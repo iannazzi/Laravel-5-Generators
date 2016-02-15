@@ -26,7 +26,6 @@ class DatabaseConnector
             ],
             'POS_PRODUCTION' => [
                 'driver' => 'mysql',
-                'driver' => 'mysql',
                 'host' => env('POS_PRODUCTION_DB_HOST'),
                 'database' => env('POS_PRODUCTION_DB_DATABASE'),
                 'username' => env('POS_PRODUCTION_DB_USERNAME'),

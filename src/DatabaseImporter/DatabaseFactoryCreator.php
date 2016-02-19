@@ -14,8 +14,8 @@ class DatabaseFactoryCreator
         //get the tables to migrate - I am migrating to two different migrations, one for
         //the main system, one for the tenant system.
         //You are probably just needing one migration. Re-write the table map for your use.
-        $craiglorious_tables_map = DatabaseMigrationMap::getCraigloriousTablesFromBluehost();
-        $tenant_tables_map = DatabaseMigrationMap::getTenantTablesFromBluehost();
+        $craiglorious_tables_map = DatabaseMigrationMap::getCraigloriousTableMap();
+        $tenant_tables_map = DatabaseMigrationMap::getTenantTableMap();
 
         //to test a single table uncomment the lower lines and change pos_product_image_lookup to your
         //source table

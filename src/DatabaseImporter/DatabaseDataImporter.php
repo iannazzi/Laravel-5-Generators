@@ -34,8 +34,8 @@ class DatabaseDataImporter
         echo 'Importing Data From Database: ' . $system->getDBC() . PHP_EOL;
 
 
-        $craiglorious_tables_map = DatabaseMigrationMap::getCraigloriousTablesFromBluehost();
-        $tenant_tables_map = DatabaseMigrationMap::getTenantTablesFromBluehost();
+        $craiglorious_tables_map = DatabaseMigrationMap::getCraigloriousTableMap();
+        $tenant_tables_map = DatabaseMigrationMap::getTenantTableMap();
 
 //        $test = $tenant_tables_map['tables']['pos_accounts'];
 //        $tenant_tables_map['tables'] = [];

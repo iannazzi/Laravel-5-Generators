@@ -20,8 +20,8 @@ class DatabaseModelCreator
 
     public static function makeModels($dbc)
     {
-        $craiglorious_tables_map = DatabaseMigrationMap::getCraigloriousTablesFromBluehost();
-        $tenant_tables_map = DatabaseMigrationMap::getTenantTablesFromBluehost();
+        $craiglorious_tables_map = DatabaseMigrationMap::getCraigloriousTableMap();
+        $tenant_tables_map = DatabaseMigrationMap::getTenantTableMap();
 
 //        $test = $tenant_tables_map['tables']['pos_products'];
 //        $tenant_tables_map['tables'] = [];

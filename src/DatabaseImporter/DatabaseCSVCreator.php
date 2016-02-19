@@ -27,6 +27,10 @@ class DatabaseCSVCreator
         $sql['pos_chart_of_accounts'] = 'Select * From pos_chart_of_accounts';
         $sql['pos_discounts'] = 'Select * From pos_discounts';
         $sql['pos_settings'] = 'Select * From pos_settings';
+        $sql['pos_zip_codes'] = 'Select pos_zip_code_id, zip_code, pos_state_id, state, pos_county_id, county from pos_zip_codes';
+
+
+        $sql['pos_zip_codes'] = 'Select pos_zip_code_id,zip_code,state,pos_state_id,primary_city, acceptable_cities, county,pos_county_id,timezone,latitude,longitude,country from pos_zip_codes';
 
         $sql['pos_product_options'] = 'SELECT * from pos_product_options';
         $sql['pos_product_attributes'] = 'SELECT * from pos_product_attributes';
@@ -54,38 +58,8 @@ class DatabaseCSVCreator
         return $path . "/" . $map['tables'][$table]['new_name'] . '.csv';
     }
 
-    public static function mapData($table, $data)
-    {
-        $map = self::chooseMap($table);
-        if ($map)
-        {
-            $columns = self::getColumns($map['tables'][ $table ], 'drop_columns');
-            $data = ArrayOperator::dropColumns($data, $columns);
-            $columns = self::getColumns($map['tables'][ $table ], 'rename_columns');
-            $data = ArrayOperator::renameColumns($data, $columns);
 
-        }
 
-        return $data;
-    }
 
-    public static function getColumns($map, $column_name)
-    {
-        return (isset($map[ $column_name ])) ? $map[ $column_name ] : [];
-    }
-
-    public static function chooseMap($table)
-    {
-        //not sure which map so choose it here...
-        $maps[] = DatabaseMigrationMap::getCraigloriousTablesFromBluehost();
-        $maps[] = DatabaseMigrationMap::getTenantTablesFromBluehost();
-
-        foreach ($maps as $map)
-        {
-            if (array_key_exists($table, $map['tables'])) return $map;
-        }
-
-        return false;
-    }
 
 }

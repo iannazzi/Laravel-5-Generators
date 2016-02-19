@@ -2,12 +2,28 @@
 namespace Iannazzi\Generators\DatabaseImporter;
 
 
+use App\Classes\Library\ArrayOperator;
 use Crypt;
 //this is the file used to map the migration and the import
 class DatabaseMigrationMap
 {
+    use DatabaseImporterTrait;
+    public static function mapData($table, $data)
+    {
+        $map = self::chooseMap($table);
+        if ($map)
+        {
+            $columns = self::getColumns($map['tables'][ $table ], 'drop_columns');
+            $data = ArrayOperator::dropColumns($data, $columns);
+            $columns = self::getColumns($map['tables'][ $table ], 'rename_columns');
+            $data = ArrayOperator::renameColumns($data, $columns);
+            $data =  self::runFunctionOnColumns($data);
 
-    public static function getTenantTablesFromBluehost()
+        }
+
+        return $data;
+    }
+    public static function getTenantTableMap()
     {
         return array(
             'pre_table_insert' => ['BluehostMigrationMap', 'preTableInsertFunction'],
@@ -193,7 +209,15 @@ class DatabaseMigrationMap
                     array(
                         'new_name' => 'brands',
                         'type' => 'regular',
-                        'rename_columns' => ['pos_manufacturer_brand_id' => 'id'],
+                        'drop_columns'=>[
+                          'brand_code',
+                            'chart_of_accounts_id',
+
+                        ],
+                        'rename_columns' => [
+                            'pos_manufacturer_brand_id' => 'id',
+                            'brand_name' => 'name',
+                        ],
 
                     ),
 
@@ -201,6 +225,10 @@ class DatabaseMigrationMap
                     array(
                         'new_name' => 'manufacturers',
                         'type' => 'regular',
+                        'drop_columns'=>[
+                            'manufacturer_code',
+                            'terms'
+                        ],
                         'rename_columns' => ['pos_manufacturer_id' => 'id'],
 
                     ),
@@ -289,8 +317,35 @@ class DatabaseMigrationMap
                     array(
                         'new_name' => 'products',
                         'type' => 'regular',
-                        'drop_columns' => ['pos_manufacturer_id', 'product_id', 'is_taxable','tax_class_id'],
-                        'rename_columns' => ['pos_product_id' => 'id', 'pos_category_id'=>'product_category_id'],
+                        'drop_columns' => [
+                            'pos_manufacturer_id',
+                            'product_id',
+                            'is_taxable',
+                            'tax_class_id',
+                            'employee_price',
+                            'shipping_price',
+                            'tax_rate',
+                            'added',
+                            'cost',
+                            'overview',
+                            'case_quantity',
+                            'case_price',
+                            'bulk_retail_quantity',
+                            'bulk_retail_price',
+                            'priority',
+                            'unit_of_measure',
+                            'weight',
+                            'comments'
+
+
+
+
+
+                        ],
+                        'rename_columns' => [
+                            'pos_product_id' => 'id',
+                            'pos_category_id'=>'product_category_id',
+                            'style_number' => 'code'],
                     ),
                 'pos_products_attributes' =>
                     array(
@@ -542,7 +597,7 @@ class DatabaseMigrationMap
         );
     }
 
-    public static function getCraigloriousTablesFromBluehost()
+    public static function getCraigloriousTableMap()
     {
         //call_user_func(array('MyClass', 'myCallbackMethod'));
         return array(
@@ -666,7 +721,11 @@ class DatabaseMigrationMap
 
                         'new_name' => 'zip_codes',
                         'type' => 'regular',
-                        'rename_columns' => ['pos_zip_code_id' => 'id'],
+                        'rename_columns' => ['pos_zip_code_id' => 'id',
+                        'pos_county_id' => 'county_id',
+                            'pos_state_id' => 'state_id',
+
+                        ],
 
                     ),]
         );

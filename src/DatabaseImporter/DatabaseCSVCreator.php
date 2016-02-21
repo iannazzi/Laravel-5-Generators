@@ -34,6 +34,8 @@ class DatabaseCSVCreator
 
         $sql['pos_product_options'] = 'SELECT * from pos_product_options';
         $sql['pos_product_attributes'] = 'SELECT * from pos_product_attributes';
+        $sql['pos_chart_of_accounts_required'] = 'SELECT * from pos_chart_of_accounts_required';
+        $sql['pos_chart_of_account_types'] = 'SELECT * from pos_chart_of_account_types';
 
 
         if ( ! isset($sql[ $table ]))

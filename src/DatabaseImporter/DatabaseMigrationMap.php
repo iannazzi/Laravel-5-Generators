@@ -61,16 +61,21 @@ class DatabaseMigrationMap
                     array(
                         'new_name' => 'chart_of_accounts',
                         'type' => 'regular',
-                        'rename_columns' => ['pos_chart_of_accounts_id' => 'id'],
+                        'drop_columns' => [
+                          'parent_chart_of_accounts_id',
+                            'pos_chart_of_account_type_id',
+                            'pos_chart_of_accounts_required_id'
+                        ],
+                        'rename_columns' => [
+                            'pos_chart_of_accounts_id' => 'id',
+                            'account_number' => 'number',
+                            'account_name' => 'name',
+                            'account_type' => 'type',
+                            'account_sub_type' => 'sub_type'
+                        ],
 
                     ),
-                'pos_chart_of_accounts_required' =>
-                    array(
-                        'new_name' => 'required_chart_of_accounts',
-                        'type' => 'regular',
-                        'rename_columns' => ['pos_chart_of_accounts_required_id' => 'id'],
 
-                    ),
                 'pos_customer_addresses' =>
                     array(
                         'new_name' => 'address_customer',
@@ -611,7 +616,12 @@ class DatabaseMigrationMap
 
                         'new_name' => 'account_types',
                         'type' => 'regular',
-                        'rename_columns' => ['pos_account_type_id' => 'id'],
+                        'drop_columns' => [],
+                        'rename_columns' => [
+                            'pos_account_type_id' => 'id',
+                            'account_type_name' => 'name',
+                            'account_type' => 'type',
+                        ],
 
                     ),
                 'pos_binders' =>
@@ -623,24 +633,8 @@ class DatabaseMigrationMap
                         'rename_columns' => ['pos_binder_id' => 'id'],
 
                     ),
-                'pos_chart_of_account_types' =>
-                    array(
-                        'make_factory' => 'false',
 
-                        'new_name' => 'chart_of_account_types',
-                        'type' => 'regular',
-                        'rename_columns' => ['pos_chart_of_account_type_id' => 'id'],
 
-                    ),
-                'pos_chart_of_accounts_required' =>
-                    array(
-                        'make_factory' => 'false',
-
-                        'new_name' => 'chart_of_accounts_required',
-                        'type' => 'regular',
-                        'rename_columns' => ['pos_chart_of_accounts_required_id' => 'id'],
-
-                    ),
                 'pos_counties' =>
                     array(
                         'make_factory' => 'false',

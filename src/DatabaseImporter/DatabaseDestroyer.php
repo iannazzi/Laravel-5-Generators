@@ -25,6 +25,8 @@ class DatabaseDestroyer
                 DB::connection('main')->statement($sql);
             }
         }
+        DB::connection('main')->statement('SET FOREIGN_KEY_CHECKS = 1');
+
     }
     public static function emptyTable($dbc, $table)
     {
@@ -45,8 +47,12 @@ class DatabaseDestroyer
     }
     public static function dropTable($dbc, $table)
     {
+        DB::connection($dbc)->statement('SET FOREIGN_KEY_CHECKS = 0');
+
         DB::connection($dbc)->statement("Drop table " . $table);
         $msg = 'Dropped table ' . $table . ' On Connection ' . $dbc;
         self::console($msg);
+        DB::connection($dbc)->statement('SET FOREIGN_KEY_CHECKS = 1');
+
     }
 }

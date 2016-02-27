@@ -29,7 +29,8 @@ class DatabaseCSVCreator
         $sql['pos_settings'] = 'Select * From pos_settings';
         $sql['pos_zip_codes'] = 'Select pos_zip_code_id, zip_code, pos_state_id, state, pos_county_id, county from pos_zip_codes';
 
-
+        $sql['pos_accounts'] = "Select company, address1 from pos_accounts LEFT JOIN pos_account_type using (pos_account_type_id)
+                                where pos_account_type.account_type_name = 'Inventory Account'"
         $sql['pos_zip_codes'] = 'Select pos_zip_code_id,zip_code,state,pos_state_id,primary_city, acceptable_cities, county,pos_county_id,timezone,latitude,longitude,country from pos_zip_codes';
 
         $sql['pos_product_options'] = 'SELECT * from pos_product_options';

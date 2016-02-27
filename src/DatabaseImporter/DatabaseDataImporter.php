@@ -5,6 +5,9 @@ namespace Iannazzi\Generators\DatabaseImporter;
 
 use App\Classes\Library\ArrayOperator;
 use App\Models\Craiglorious\System;
+use App\Models\Tenant\Address;
+use App\Models\Tenant\Contact;
+use App\Models\Tenant\Vendor;
 use DB;
 use Schema;
 
@@ -17,10 +20,71 @@ class DatabaseDataImporter
 
     public function __construct($source_connection, $test)
     {
+
         $this->test = $test;
         $this->source_connection = $source_connection;
         $this->databaseDestroyer = new DatabaseDestroyer();
     }
+    //my first hope was simply copying the database... that is not going to happen
+
+    public static function importVendors($dbc)
+    {
+        DatabaseConnector::addConnections();
+        self::importInventoryVendors($dbc);
+        self::importExpenseVendors($dbc);
+
+
+
+
+
+    }
+
+    private static function importInventoryVendors($dbc)
+    {
+        $sql = "Select pos_accounts.* from pos_accounts LEFT JOIN pos_account_type using (pos_account_type_id)
+                                where pos_account_type.account_type_name = 'Inventory Account'";
+        self::addVendors($dbc, $sql, 'Inventory');
+    }
+
+    private static function importExpenseVendors($dbc)
+    {
+        $sql = "Select pos_accounts.* from pos_accounts LEFT JOIN pos_account_type using (pos_account_type_id)
+                                where pos_account_type.account_type_name = 'Expense Account'";
+        self::addVendors($dbc, $sql, 'Expense');
+    }
+
+    private static function addVendors($dbc, $sql, $type)
+    {
+        $rows =  DB::connection($dbc)->select($sql);
+        foreach($rows as $row)
+        {
+            $address =  Address::create([
+                'address1' => $row->address1,
+                'address2' => $row->address2,
+                'city' => $row->city,
+                'state' => $row->state,
+                'zip' => $row->zip,
+                'country' => $row->country,
+                'phone' => $row->phone,
+                'fax' => $row->fax,
+                'comments' => 'Contact: ' . $row->primary_contact .PHP_EOL. 'Emails: ' . $row->email,
+                'active' => 1
+            ]);
+            //going to loose the contact....
+            $vendor = Vendor::create([
+                'contact_id' => 0,
+                'billing_address_id' => $address->id,
+                'shipping_address_id' => 0,
+                'type' => $type,
+                'name' => $row->company,
+                'account_number' => bcrypt(craigsDecryption($row->account_number)),
+                'active' => 1
+            ]);
+
+
+        }
+    }
+
 
     public function importEmbrasseMoiData()
     {
